@@ -19,14 +19,20 @@ lambda_output_file=/opt/app/build/lambda.zip
 set -e
 
 yum update -y
-yum install -y cpio python27-pip zip
+yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install -y cpio python2-pip zip yum-utils
 pip install --no-cache-dir virtualenv
+pip install --upgrade pip
+rm -rf env
 virtualenv env
 . env/bin/activate
 pip install --no-cache-dir -r requirements.txt
 
+
 pushd /tmp
-yumdownloader -x \*i686 --archlist=x86_64 clamav clamav-lib clamav-update
+yumdownloader -x \*i686 --archlist=x86_64 clamav clamav-lib clamav-update json-c pcre2
+rpm2cpio pcre2*.rpm | cpio -idmv
+rpm2cpio json-c*.rpm | cpio -idmv
 rpm2cpio clamav-0*.rpm | cpio -idmv
 rpm2cpio clamav-lib*.rpm | cpio -idmv
 rpm2cpio clamav-update*.rpm | cpio -idmv
