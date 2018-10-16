@@ -15,6 +15,9 @@
 # limitations under the License.
 
 lambda_output_file=/opt/app/build/lambda.zip
+#lambda_output_file=/home/ec2-user/bucket-antivirus-function/build/lambda.zip
+
+export AV_DEFINITION_S3_BUCKET=tib-av-defs
 
 set -e
 
