@@ -46,17 +46,17 @@ def upload_defs_to_s3(bucket, prefix, local_path):
         local_file_path = os.path.join(local_path, filename)
         if os.path.exists(local_file_path):
             local_file_md5 = md5_from_file(local_file_path)
-            #if local_file_md5 != md5_from_s3_tags(bucket, os.path.join(prefix, filename)):
-            print("Uploading %s to s3://%s" % (local_file_path, os.path.join(bucket, prefix, filename)))
-            s3_object = s3.Object(bucket, os.path.join(prefix, filename))
-            s3_object.upload_file(os.path.join(local_path, filename))
-            s3_client.put_object_tagging(
-                Bucket=s3_object.bucket_name,
-                Key=s3_object.key,
-                Tagging={"TagSet": [{"Key": "md5", "Value": local_file_md5}]}
-            )
-            #else:
-            #    print("Not uploading %s because md5 on remote matches local." % filename)
+            if local_file_md5 != md5_from_s3_tags(bucket, os.path.join(prefix, filename)):
+                print("Uploading %s to s3://%s" % (local_file_path, os.path.join(bucket, prefix, filename)))
+                s3_object = s3.Object(bucket, os.path.join(prefix, filename))
+                s3_object.upload_file(os.path.join(local_path, filename))
+                s3_client.put_object_tagging(
+                    Bucket=s3_object.bucket_name,
+                    Key=s3_object.key,
+                    Tagging={"TagSet": [{"Key": "md5", "Value": local_file_md5}]}
+                )
+            else:
+                print("Not uploading %s because md5 on remote matches local." % filename)
 
 
 def update_defs_from_freshclam(path, library_path=""):
